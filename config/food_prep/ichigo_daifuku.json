@@ -1,0 +1,20 @@
+{
+    "job": {
+      "name": "Ichigo Daifuku",
+      "description": "Help with Ichigo Daifuku prep",
+      "location": "Sankofa 8th Floor"
+    },
+    "generator": [
+      {
+        "shifts": [
+          {
+            "start": "2026-04-01T16:00:00-08:00",
+            "end": "2026-04-01T17:00:00-08:00",
+            "people": 2,
+            "divideByMin": 60
+          }
+        ]
+      }
+    ]
+  }
+  
