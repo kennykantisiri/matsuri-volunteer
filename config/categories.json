@@ -1,0 +1,51 @@
+[
+    {
+      "name": "Food",
+      "color": "#F8EDEB",
+      "description": "Help with food on the day-of",
+      "id": "food"
+    },
+    {
+      "name": "Games",
+      "color": "#F8EDEB",
+      "description": "Help with games on the day-of",
+      "id": "games"
+    },
+    {
+      "name": "Chalkboarding",
+      "color": "#D8E2DC",
+      "description": "Help with chalkboarding",
+      "id": "chalking"
+    },
+    {
+      "name": "Food Prep",
+      "color": "#FFD7BA",
+      "description": "Help with food preparation",
+      "id": "food-prep"
+    },
+    {
+      "name": "Setup",
+      "color": "#FFD7BA",
+      "description": "Help with event setup",
+      "id": "setup"
+    },
+    {
+      "name": "Clean Up",
+      "color": "#FFD7BA",
+      "description": "Help with event clean up",
+      "id": "cleanup"
+    },
+    {
+      "name": "Flyering",
+      "color": "#ECE4DB",
+      "description": "Help with flyering before the event",
+      "id": "flyering"
+    },
+    {
+      "name": "Cashier",
+      "color": "#ECE4DB",
+      "description": "Help with cashier duties",
+      "id": "cashier"
+    }
+  ]
+  

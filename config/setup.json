@@ -3,23 +3,21 @@
       "name": "Setup",
       "description": "Help with setup day-of"
     },
-    "generator": [
-      {
-        "shifts": [
-          {
-            "start": "2026-04-02T10:00:00-08:00",
-            "end": "2026-04-02T14:00:00-08:00",
-            "people": 5,
-            "divideByMin": 60
-          },
-          {
-            "start": "2026-04-02T14:00:00-08:00",
-            "end": "2026-04-02T17:00:00-08:00",
-            "people": 7,
-            "divideByMin": 60
-          }
-        ]
-      }
-    ]
+    "generator":{
+      "shifts": [
+        {
+          "start": "2026-04-02T10:00:00-07:00",
+          "end": "2026-04-02T14:00:00-07:00",
+          "people": 5,
+          "divideByMin": 60
+        },
+        {
+          "start": "2026-04-02T14:00:00-07:00",
+          "end": "2026-04-02T17:00:00-07:00",
+          "people": 7,
+          "divideByMin": 60
+        }
+      ]
+    }
   }
   

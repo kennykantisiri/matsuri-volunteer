@@ -1,9 +1,20 @@
+"use client"
+
 import Link from "next/link";
 
 export default function Navbar() {
     return (
-        <nav className="p-4 flex items-center justify-between">
-        <Link target="_blank" href="https://sdmatsuri.com" className="text-small text-[#452B11]">Matsuri 2026 Main Website</Link>
-        </nav>
+        <div className="bg-[#D3D3D3]">
+            <nav className="p-3 px-10">
+                <div className="flex flex-1 items-center justify-between">
+                    <p>Matsuri Volunteer Portal</p>
+                    <div className="flex gap-x-5">
+                        <Link href="/" className="text-small text-[#452B11]">Home</Link>
+                        <Link href="/" className="text-small text-[#452B11]">My Shifts</Link>
+                        <Link href="/" className="text-small text-[#452B11]">Logout</Link>
+                    </div>
+                </div>
+            </nav>
+        </div>
     );
 }
