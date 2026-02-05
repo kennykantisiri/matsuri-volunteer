@@ -3,7 +3,7 @@
         "name": "Info Booth",
         "description": "Help with refunding money and info booth!"
     },
-    "generator": [
+    "generator": 
         {
             "shifts": [
                 {
@@ -19,6 +19,6 @@
                 }
             ]
         }
-    ]
+    
   }
   

@@ -4,8 +4,7 @@
       "description": "Help with drinks prep such as making Matcha",
       "location": "Sankofa 8th Floor"
     },
-    "generator": [
-      {
+    "generator": {
         "shifts": [
           {
             "start": "2026-04-01T17:00:00-08:00",
@@ -14,7 +13,7 @@
             "divideByMin": 60
           }
         ]
-      }
-    ]
+    }
+    
   }
   

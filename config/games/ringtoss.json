@@ -3,8 +3,7 @@
         "name": "Ringtoss",
         "description": "Assist as a game assistant or cashier!"
     },
-    "generator": [
-        {
+    "generator": {
             "shifts": [
                 {
                     "start": "2026-04-02T17:00:00-08:00",
@@ -13,7 +12,6 @@
                     "divideByMin": 60
                 }
             ]
-        }
-    ]
+    }
   }
   

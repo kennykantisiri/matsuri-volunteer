@@ -12,10 +12,10 @@ export interface Shift {
     attributes: Record<string, any>;
 }
 
-function loadShifts(filePath: string) {
+function loadJSONFile(filePath: string) {
 
     try {
-        const fileLocation = path.join(process.cwd(), "config", filePath + ".json");
+        const fileLocation = path.join(filePath);
         const content = fs.readFileSync(fileLocation, 'utf-8');
         return JSON.parse(content);
     }
@@ -47,41 +47,92 @@ function timeSplitter(startTime: string, endTime: string, intervalMinutes: numbe
     return slots;
 }
 
-export function generateShifts(filePath: string) {
+function objectToShifts(jsonData: any, category: string): Shift[] {
 
     try {
-        const rawJob = loadShifts(filePath);
-        const jobName = rawJob.job.name || "Undefined Job";
-        const jobDescription = rawJob.job.description || "No description provided.";
-        const rawShifts = rawJob.generator.shifts || [];
+        const jobName = jsonData?.job?.name || "Undefined Job";
+        const jobDescription = jsonData?.job?.description || "No description provided.";
+        const rawShifts = jsonData.generator.shifts || [];
+       
         let splitShifts = null;
 
-        if (rawShifts[0].divideByMin !== undefined) {
-            splitShifts = timeSplitter(rawShifts[0].start, rawShifts[0].end, rawShifts[0].divideByMin);
-        } else {
-            splitShifts = [{start: new Date(rawShifts[0].start).toISOString(), end: new Date(rawShifts[0].end).toISOString()}];
+        const generatedShiftsArray: Shift[] = [];
+
+        for (const shiftSection of rawShifts) {
+            if (shiftSection.divideByMin !== undefined) {
+                splitShifts = timeSplitter(shiftSection.start, shiftSection.end, shiftSection.divideByMin);
+            } else {
+                splitShifts = [{start: new Date(shiftSection.start).toISOString(), end: new Date(shiftSection.end).toISOString()}];
+            }
+            
+            splitShifts.map((shift) => {
+    
+    
+                const generatedId = category !== jobName.toLowerCase()
+                    ? `${category}_${jobName.toLowerCase().replace(/\s/g, '_')}_${toHHMM(shift.start)}`
+                    : `${jobName.toLowerCase()}-${toHHMM(shift.start)}`;
+    
+                generatedShiftsArray.push({
+                    id: generatedId,
+                    job: jobName,
+                    description: jobDescription,
+                    start: shift.start,
+                    end: shift.end,
+                    totalAvailability: shiftSection.people,
+                    attributes: shiftSection.attributes || {}
+                });
+            });
         }
 
-        const generatedShiftsArray: Shift[] = [];
         
-        splitShifts.map((shift) => {
-            generatedShiftsArray.push({
-                id: `${filePath}-${toHHMM(shift.start)}`,
-                job: jobName,
-                description: jobDescription,
-                start: shift.start,
-                end: shift.end,
-                totalAvailability: rawShifts[0].people,
-                attributes: rawShifts[0].attributes || {}
-            });
+
+        return generatedShiftsArray
+
+    } catch (error) {
+        console.error(error);
+        return []
+    }
+    
+
+}
+
+export function generateShifts(category: string) {
+
+    
+    const fileLocation = path.join(process.cwd(), "config", category + ".json");
+    const folderLocation = path.join(process.cwd(), "config", category);
+
+    try {
+        const files = fs.readdirSync(folderLocation);
+        const allShifts: Shift[] = [];
+
+        files.forEach((file) => {
+            if (file.endsWith(".json")) {
+                const jsonData = loadJSONFile(path.join(folderLocation, file));
+                const shifts = objectToShifts(jsonData, category);
+                allShifts.push(...shifts);
+            }
         });
 
-        return generatedShiftsArray;
-    } catch (error) {
-        console.log(error)
-        return null;
+        return allShifts;
+    } catch {
+        // Not a folder, try as a single file
     }
+
+    try {
+        const jsonData = loadJSONFile(fileLocation);
+        const shifts = objectToShifts(jsonData, category);
+        return shifts;
+    } catch (error) {
+        console.error("Error generating shifts:", error);
+        return [];
+    }
+
 }
+
+
+
+
 
 
 function toHHMM(date: string): string {

@@ -1,7 +1,7 @@
 {
     "job": {
-      "name": "Curry Udon",
-      "description": "Help with serving and cooking/warming up Curry Udon."
+      "name": "Okonomiyaki",
+      "description": "Help with serving up and grilling the Okonomiyaki."
     },
     "generator": {
       "shifts": [
@@ -10,8 +10,8 @@
           "end": "2026-04-02T22:00:00-08:00",
           "people": {
               "cashier": 1,
-              "noodles": 2,
-              "curry": 2
+              "griller": 2,
+              "saucer": 1
           },
           "divideByMin": 60
         }

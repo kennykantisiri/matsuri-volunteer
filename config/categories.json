@@ -21,7 +21,7 @@
       "name": "Food Prep",
       "color": "#FFD7BA",
       "description": "Help with food preparation",
-      "id": "food-prep"
+      "id": "food_prep"
     },
     {
       "name": "Setup",

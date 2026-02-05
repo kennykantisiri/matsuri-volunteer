@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar"
-import { getCategories } from "../lib/volunteer";
+import { getCategories, getCategoryDetails } from "../lib/volunteer";
 import { Category } from "../lib/types";
 import { Header } from "@/app/components/ui/text";
 import ClickableCategory from "./ClickableCategory";
@@ -16,6 +16,9 @@ import ClickableCategory from "./ClickableCategory";
 // ]
 
 export default function VolunteerPage() {
+
+    
+
     return (
         <div>
             <Navbar />
@@ -27,7 +30,8 @@ export default function VolunteerPage() {
                         categoryId={cat.id}
                         name={cat.name}
                         color={cat.color}
-                        description={cat.description} />
+                        description={cat.description}
+                        categoryDetails={getCategoryDetails(cat)} />
                 ))}
             </div>
         </div>

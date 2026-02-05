@@ -4,7 +4,7 @@
       "description": "Help with Taiyaki filling and prep",
       "location": "Sankofa 4th Floor"
     },
-    "generator": [
+    "generator": 
       {
         "shifts": [
           {
@@ -15,6 +15,6 @@
           }
         ]
       }
-    ]
+    
   }
   

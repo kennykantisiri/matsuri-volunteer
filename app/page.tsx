@@ -29,13 +29,13 @@ export default function Home() {
 
         <div className="flex flex-col gap-y-5 items-center justify-center text-center">
           <div className="flex items-center justify-center text-center">
-            <Button onClick={() => router.push("/volunteer")}>Volunteer Now</Button>
+            <Button onClick={() => router.push("/auth")}>Volunteer Now</Button>
           </div>
           
 
-          <div className="flex items-center justify-center text-center">
+          {/* <div className="flex items-center justify-center text-center">
             <p>Already signed up? <br></br><span className="underline underline-offset-4">Manage your shifts here</span></p>
-          </div>
+          </div> */}
         </div>
         
       </div>

@@ -3,7 +3,7 @@
         "name": "Ticket Booth",
         "description": "Help with collecting money, such as Zelle, Venmo, and Cash!"
     },
-    "generator": [
+    "generator": 
         {
             "shifts": [
                 {
@@ -34,6 +34,6 @@
                 }
             ]
         }
-    ]
+    
   }
   
