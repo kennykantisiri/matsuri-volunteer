@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { Category } from "./types";
+import { Category, CategoryDetails } from "./types";
 import { generateShifts } from "../volunteer/[cat]/ShiftGenerator";
 
 export function getCategories() {
@@ -20,20 +20,21 @@ function sumPeople(people: { [key: string]: number }): number {
     return total;
 }
 
-export function getCategoryDetails(category: Category) {
+
+export function getCategoryDetails(category: Category): CategoryDetails {
 
     const shifts = generateShifts(category.id);
-    let earliestStart = new Date(shifts[0].start);
-    let latestEnd = new Date(shifts[0].end);
+    let earliestStart = shifts[0].start;
+    let latestEnd = shifts[0].end;
     let totalSlots = 0;
 
     for (const shift of shifts) {
-        if (new Date(shift.start) < earliestStart) {
-            earliestStart = new Date(shift.start);
+        if (shift.start < earliestStart) {
+            earliestStart = shift.start;
         }
 
-        if (new Date(shift.end) > latestEnd) {
-            latestEnd = new Date(shift.end);
+        if (shift.end> latestEnd) {
+            latestEnd =shift.end;
         }
 
         if (typeof shift.totalAvailability === "object" && shift.totalAvailability !== null) {
@@ -52,7 +53,7 @@ export function getCategoryDetails(category: Category) {
         totalSlots: totalSlots
     }
     
-    console.log(details)
+    // console.log(details)
 
     return details;
 }

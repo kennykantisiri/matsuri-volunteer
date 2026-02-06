@@ -1,16 +1,9 @@
 import { Category } from "@/app/lib/types";
 import fs from "fs";
 import path from "path";
+import { Shift } from "@/app/lib/types";
 
-export interface Shift {
-    id: string;
-    job: string;
-    description: string;
-    start: string;
-    end: string;
-    totalAvailability: number;
-    attributes: Record<string, any>;
-}
+
 
 function loadJSONFile(filePath: string) {
 
@@ -27,8 +20,8 @@ function loadJSONFile(filePath: string) {
     
 }
 
-function timeSplitter(startTime: string, endTime: string, intervalMinutes: number): {start: string, end: string}[] {
-    const slots: { start: string, end: string }[] = [];
+function timeSplitter(startTime: string, endTime: string, intervalMinutes: number): {start: Date, end: Date}[] {
+    const slots: { start: Date, end: Date }[] = [];
 
     let currentTime = new Date(startTime);
     const endDateTime = new Date(endTime);
@@ -39,8 +32,8 @@ function timeSplitter(startTime: string, endTime: string, intervalMinutes: numbe
         const slotEnd = currentTime > endDateTime ? endDateTime : new Date(currentTime);
         
         slots.push({
-            start: slotStart.toISOString(),
-            end: slotEnd.toISOString()
+            start: slotStart,
+            end: slotEnd
         });
     }
 
@@ -62,15 +55,15 @@ function objectToShifts(jsonData: any, category: string): Shift[] {
             if (shiftSection.divideByMin !== undefined) {
                 splitShifts = timeSplitter(shiftSection.start, shiftSection.end, shiftSection.divideByMin);
             } else {
-                splitShifts = [{start: new Date(shiftSection.start).toISOString(), end: new Date(shiftSection.end).toISOString()}];
+                splitShifts = [{start: new Date(shiftSection.start), end: new Date(shiftSection.end)}];
             }
             
             splitShifts.map((shift) => {
     
     
                 const generatedId = category !== jobName.toLowerCase()
-                    ? `${category}_${jobName.toLowerCase().replace(/\s/g, '_')}_${toHHMM(shift.start)}`
-                    : `${jobName.toLowerCase()}-${toHHMM(shift.start)}`;
+                    ? `${category}_${jobName.toLowerCase().replace(/\s/g, '_')}_${toHHMM(shift.start.toISOString())}`
+                    : `${jobName.toLowerCase()}-${toHHMM(shift.start.toISOString())}`;
     
                 generatedShiftsArray.push({
                     id: generatedId,

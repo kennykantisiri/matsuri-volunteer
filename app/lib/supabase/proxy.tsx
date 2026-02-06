@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -10,7 +11,7 @@ export async function updateSession(request: NextRequest) {
   // variable. Always create a new one on each request.
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         getAll() {
@@ -33,20 +34,97 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: If you remove getClaims() and you use server-side rendering
   // with the Supabase client, your users may be randomly logged out.
-  const { data } = await supabase.auth.getClaims()
+  const { data } = await supabase.auth.getClaims();
 
-  const user = data?.claims
+  const user = data?.claims;
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
+  const pathname = request.nextUrl.pathname;
+
+  if (!user && (!pathname.startsWith('/auth') || (pathname.startsWith('/auth') && pathname.endsWith("signup"))) && pathname !== '/') {
+    const url = request.nextUrl.clone();
+    url.pathname = '/auth';
     return NextResponse.redirect(url)
   }
+
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('first_name, last_name, phone') 
+      .eq('user_id', user.sub)
+      .single();
+
+    if (!profile?.first_name && !profile?.last_name && !profile?.phone) {
+      if (pathname !== '/auth/signup') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/auth/signup';
+        return NextResponse.redirect(url)
+      }
+    } else {
+      if (pathname.startsWith('/auth') || pathname == '/auth/signup' || pathname == '/') {
+        const url = request.nextUrl.clone();
+        url.pathname = '/volunteer';
+        return NextResponse.redirect(url)
+      }
+    }
+  }
+
+
+  // // 1️⃣ Not logged in → redirect to /auth
+  // if (
+  //   !user &&
+  //   !pathname.startsWith('/auth') &&
+  //   pathname !== '/'
+  // ) {
+  //   console.log("running #1")
+  //   const url = request.nextUrl.clone()
+  //   url.pathname = '/auth'
+  //   return NextResponse.redirect(url)
+  // }
+
+
+  // // 2️⃣ Logged in → fetch profile
+  // let profile = null
+  // if (user) {
+  //   const { data, error } = await supabase
+  //     .from('profiles')
+  //     .select('first_name, last_name, phone')
+  //     .eq('user_id', user.sub)
+  //     .select('*')
+
+  //   profile = data
+
+  // }
+
+  // console.log(`Profile ${profile}`)
+
+  // console.log("got here #2")
+
+  // // 3️⃣ Logged in, profile incomplete → redirect to /auth/signup
+  // if (
+  //   user &&
+  //   (!profile?.first_name && !profile?.last_name && !profile?.phone_number) &&
+  //   pathname !== '/auth/signup'
+  // ) {
+  //   console.log("running #2")
+  //   const url = request.nextUrl.clone()
+  //   url.pathname = '/auth/signup'
+  //   return NextResponse.redirect(url)
+  // }
+
+  // console.log("got here #3")
+
+  // // 4️⃣ Logged in, profile exists → prevent visiting /auth or /auth/signup
+  // if (
+  //   user &&
+  //   profile &&
+  //   pathname.startsWith('/auth')
+  // ) {
+  //   console.log("running #3")
+  //   const url = request.nextUrl.clone()
+  //   url.pathname = '/volunteer'
+  //   return NextResponse.redirect(url)
+  // }
+
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:

@@ -11,3 +11,21 @@ export interface CategoryDetails {
     availableSlots: number;
     totalSlots: number;
 }
+
+export interface Shift {
+    id: string;
+    job: string;
+    description: string;
+    start: Date;
+    end: Date;
+    totalAvailability: number;
+    attributes: Record<string, any>;
+}
+
+export interface Profile {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+}
