@@ -1,59 +1,120 @@
-import fs from "fs";
-import path from "path";
-import { Category, CategoryDetails } from "./types";
-import { generateShifts } from "../volunteer/[cat]/ShiftGenerator";
+"use server"
 
-export function getCategories() {
-    const filePath = path.join(process.cwd(), "config", "categories.json");
-    const fileContents = fs.readFileSync(filePath, "utf-8");
+import { createClient } from "@/app/lib/supabase/server";
+import { Shift } from "./types";
+import { timeStamp } from "console";
+import { create } from "domain";
+import { read } from "fs";
 
-    const categories = JSON.parse(fileContents);
+type Scope = "user" | "all";
 
-    return categories;
-}
-
-function sumPeople(people: { [key: string]: number }): number {
-    let total = 0;
-        for (const key in people) {
-            total += people[key];
-        }
-    return total;
-}
-
-
-export function getCategoryDetails(category: Category): CategoryDetails {
-
-    const shifts = generateShifts(category.id);
-    let earliestStart = shifts[0].start;
-    let latestEnd = shifts[0].end;
-    let totalSlots = 0;
-
-    for (const shift of shifts) {
-        if (shift.start < earliestStart) {
-            earliestStart = shift.start;
-        }
-
-        if (shift.end> latestEnd) {
-            latestEnd =shift.end;
-        }
-
-        if (typeof shift.totalAvailability === "object" && shift.totalAvailability !== null) {
-            shift.totalAvailability = sumPeople(shift.totalAvailability);
-        } 
-        
-        if (typeof shift.totalAvailability === "number") {
-            totalSlots = totalSlots + shift.totalAvailability;
-        }
-    }
-
-    const details = {
-        earliestStart: earliestStart,
-        latestEnd: latestEnd,
-        availableSlots: 0,
-        totalSlots: totalSlots
-    }
+export async function getShifts(scope: Scope, filter?: string): Promise<any> {
     
-    // console.log(details)
+    const supabase = await createClient();
 
-    return details;
+    const {
+        data: { user } 
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+        return null;
+    }
+
+
+    if (scope === "all") {
+        const { data, error } = await supabase
+            .from('signups')
+            .select('*');
+
+        if (error) {
+            console.error("Error fetching all shifts:", error);
+            return null;
+        }
+
+        return data;
+    }
+
+    if (scope === "user") {
+        const { data, error } = await supabase
+            .from('signups')
+            .select('*')
+            .eq('user_id', user?.id);
+
+        if (error) {
+            console.error("Error fetching user shifts:", error);
+            return null;
+        }
+
+        return data;
+    }
+
+    return [];
+}
+
+export async function signUp(shift: Shift) {
+    const supabase = await createClient();
+
+    const {
+        data: { user } 
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+        return null;
+    }
+
+    const { error } = await supabase
+        .from('signups')
+        .insert({
+            user_id: user.id,
+            timestamp: new Date().toISOString(),
+            shift_id: shift.id,
+            attributes: shift.attributes
+        });
+
+    if (error) {
+        console.error("Error signing up for shift:", error);
+        return null;
+    }
+
+    return true;
+}
+
+export async function readProfile() {
+    const supabase = await createClient();
+    
+    const {
+        data: { user } 
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+        return null;
+    }
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, email, phone')
+        .eq('user_id', user.id)
+        .single();
+
+    if (error) {
+        console.error("Error fetching user profile:", error);
+        return null;
+    }
+
+    return data;
+}
+
+export async function getFirstName(): Promise<string> {
+
+    const profile = await readProfile();
+
+    if (profile) {
+        return profile.first_name;
+    }
+
+    else {
+        return "";
+    }
+
+    
 }

@@ -1,6 +1,6 @@
 import Button from "@/app/components/Button"
 import Navbar from "@/app/components/Navbar"
-import { getCategories } from "@/app/lib/volunteer"
+import { getCategories } from "@/app/lib/category"
 import { Category } from "@/app/lib/types"
 // import JobTable from "./JobTable";
 import { Header } from "@/app/components/ui/text";

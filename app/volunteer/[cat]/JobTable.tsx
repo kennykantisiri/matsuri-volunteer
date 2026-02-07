@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation";
-import { getCategories } from "@/app/lib/volunteer";
+import { getCategories } from "@/app/lib/category";
 import { ArrowUpDown } from "lucide-react"
 
 import {
@@ -25,7 +25,9 @@ import {
 import { Shift } from "@/app/lib/types";
 import { checkSameCalendarDay } from "../ClickableCategory";
 import Button from "@/app/components/Button";
-import React from "react";
+import React, { act, useEffect, useState } from "react";
+import { ConfirmWithLoading } from "./ConfirmDialog";
+import { getShifts } from "@/app/lib/volunteer";
 
 
 interface ShiftProps {
@@ -48,7 +50,19 @@ function formatDateTable(startDate: Date, endDate: Date) {
 
 export function JobTable({ data }: ShiftProps) {
 
-    const [sorting, setSorting] = React.useState<SortingState>([]);
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [shiftSignups, setShiftSignups] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function check() {
+          const result = await getShifts("user");
+          setShiftSignups(result);
+          setLoading(false);
+        }
+      
+        check()
+      }, [])
 
     const columns: ColumnDef<Shift>[] = [
         {
@@ -93,16 +107,35 @@ export function JobTable({ data }: ShiftProps) {
         },
         {
             accessorKey: "totalAvailability",
-            header: "Availability"
+            header: "Availability",
+            accessorFn: shift => {
+
+                const count = shift.totalAvailability;
+
+                if (typeof count === "number") {
+                    return count;
+                }
+
+                if (count && typeof count === "object") {
+                    console.log(count)
+                    return Object.values(count).reduce((sum: number, value) => sum + (typeof value === "number" ? value : 0), 0);
+                }
+            }
         },
         {
             id: "action",
             header: "",
-            cell: action => {
+            cell: ( { row }) => {
+
+                const shiftCur = row.original;
+                const initialSignedUp = shiftSignups.some((signup) => signup.shift_id === shiftCur.id);
+                
+
                 return (
-                    <div className="ml-5 flex gap-x-2">
-                        <Button onClick={() => console.log("hi")}>Sign Up</Button>
-                        <Button onClick={() => console.log("hi")}>View Others</Button>
+                    <div className="flex gap-x-3">
+                        {loading ? (<Button>Loading...</Button>) : (<ConfirmWithLoading shift={shiftCur} initialSignedUp={initialSignedUp} attributes=""/>)}
+                        <Button onClick={() => null}>View Others</Button>
+                       
                     </div>
                 )
             }
@@ -147,10 +180,11 @@ export function JobTable({ data }: ShiftProps) {
                         table.getRowModel().rows.map((row) => (
                         <TableRow
                             key={row.id}
+                            className="even:bg-muted/70"
                             data-state={row.getIsSelected() && "selected"}
                         >
                             {row.getVisibleCells().map((cell) => (
-                            <TableCell key={cell.id}>
+                            <TableCell className="p-6" key={cell.id}>
                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </TableCell>
                             ))}
@@ -158,7 +192,7 @@ export function JobTable({ data }: ShiftProps) {
                         ))
                     ) : (
                         <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center">
+                        <TableCell className="h-24 text-center p-4" colSpan={columns.length} >
                             No results.
                         </TableCell>
                         </TableRow>
