@@ -8,6 +8,7 @@ import { generateShifts } from "./ShiftGenerator";
 import { Shift } from "@/app/lib/types";
 import SearchJob from "./SearchJob";
 import { JobTable } from "./JobTable";
+import { JobTableContainer } from "./JobTableContainer";
 
 interface PageProps {
     // since params is a promise, we need to await it since of NextJS 13 async server components
@@ -45,7 +46,7 @@ export default async function CategoryPage({ params }: PageProps) {
                         <SearchJob />
                     </div>
                 
-                    <JobTable data={shifts}/>
+                    <JobTableContainer data={shifts}/>
                 </div>
                 
             </div>

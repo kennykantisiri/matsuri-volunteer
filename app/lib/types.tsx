@@ -19,6 +19,7 @@ export interface Shift {
     start: Date;
     end: Date;
     totalAvailability: number;
+    category: string;
     attributes: Record<string, any>;
 }
 

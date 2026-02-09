@@ -71,6 +71,7 @@ function objectToShifts(jsonData: any, category: string): Shift[] {
                     description: jobDescription,
                     start: shift.start,
                     end: shift.end,
+                    category: category,
                     totalAvailability: shiftSection.people,
                     attributes: shiftSection.attributes || {}
                 });
@@ -89,7 +90,7 @@ function objectToShifts(jsonData: any, category: string): Shift[] {
 
 }
 
-export function generateShifts(category: string) {
+export function generateShifts(category: string): Shift[] {
 
     
     const fileLocation = path.join(process.cwd(), "config", category + ".json");

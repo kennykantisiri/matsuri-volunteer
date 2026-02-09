@@ -29,14 +29,14 @@ export default async function VolunteerPage() {
             <Navbar />
             <Header className="p-8 m-2">Welcome, {firstName.charAt(0).toUpperCase() + firstName.slice(1)}! Please begin by <b>selecting a category.</b></Header>
             <div className="grid grid-cols-3 px-8">
-                {getCategories().map((cat: Category) => (
+                {getCategories().map(async (cat: Category) => (
                     <ClickableCategory 
                         key={cat.id}
                         categoryId={cat.id}
                         name={cat.name}
                         color={cat.color}
                         description={cat.description}
-                        categoryDetails={getCategoryDetails(cat)} />
+                        categoryDetails={await getCategoryDetails(cat)} />
                 ))}
             </div>
         </div>

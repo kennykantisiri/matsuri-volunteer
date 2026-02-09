@@ -17,7 +17,7 @@ export default function Navbar() {
     const supabase = createClient()
 
     return (
-        <div className="bg-[#D3D3D3]">
+        <div className="pt-5">
             <nav className="p-3 px-10">
                 <div className="flex flex-1 items-center justify-between">
                     <div className="flex align-center cursor-pointer items-center" onClick={() => router.push("/")}>
@@ -25,8 +25,9 @@ export default function Navbar() {
                         <p><b><span className="text-[#946331]">MATSURI 2026</span> <span className="text-[#452B11]">VOLUNTEER PORTAL</span></b></p>
                     </div>
                     <div className="flex gap-x-5">
-                        <Link href="/" className="text-small text-[#452B11]">Home</Link>
-                        <Link href="/" className="text-small text-[#452B11]">My Shifts</Link>
+                        <Link href="/volunteer" className="text-small text-[#452B11]">Home</Link>
+                        <Link href="/volunteer/shifts" className="text-small text-[#452B11]">My Shifts</Link>
+                        <Link href="/volunteer/profile" className="text-small text-[#452B11]">Profile</Link>
                         <button onClick={async () => {await handleLogout()}} className="cursor-pointer text-small text-[#452B11]">Logout</button>
                     </div>
                 </div>

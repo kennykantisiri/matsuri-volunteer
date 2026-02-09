@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { Category, CategoryDetails } from "./types";
 import { generateShifts } from "../volunteer/[cat]/ShiftGenerator";
+import { getFormattedAllSignups } from "./volunteer";
 
 export function getCategories() {
     const filePath = path.join(process.cwd(), "config", "categories.json");
@@ -21,11 +22,12 @@ function sumPeople(people: { [key: string]: number }): number {
 }
 
 
-export function getCategoryDetails(category: Category): CategoryDetails {
+export async function getCategoryDetails(category: Category): Promise<CategoryDetails> {
 
     const shifts = generateShifts(category.id);
     let earliestStart = shifts[0].start;
     let latestEnd = shifts[0].end;
+    let filledSlots = 0;
     let totalSlots = 0;
 
     for (const shift of shifts) {
@@ -44,12 +46,23 @@ export function getCategoryDetails(category: Category): CategoryDetails {
         if (typeof shift.totalAvailability === "number") {
             totalSlots = totalSlots + shift.totalAvailability;
         }
+        
+        const formattedAllSignups = await getFormattedAllSignups();
+        filledSlots = 0;
+        formattedAllSignups.forEach((signup) => {
+            if (signup.category === category.id) {
+                filledSlots += 1;
+            }
+        })
+
+        
+
     }
 
     const details = {
         earliestStart: earliestStart,
         latestEnd: latestEnd,
-        availableSlots: 0,
+        filledSlots: filledSlots,
         totalSlots: totalSlots
     }
     

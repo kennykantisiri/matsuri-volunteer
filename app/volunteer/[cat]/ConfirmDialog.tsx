@@ -14,36 +14,43 @@ import {
 } from "@/app/components/ui/alert-dialog"
 import Button from "@/app/components/Button"
 import { Shift } from "@/app/lib/types";
-import { getShifts, signUp } from "@/app/lib/volunteer";
-import { sign } from "crypto";
+import { useRouter } from "next/navigation";
+import { getShifts, signUp, giveUp } from "@/app/lib/volunteer";
 
 export interface ReserveShift {
     shift: Shift;
     initialSignedUp: boolean;
     attributes: any;
+    onSuccess?: () => void;
 }
 
 
-export function ConfirmWithLoading({ shift, initialSignedUp, attributes }: ReserveShift) {
+export function ConfirmWithLoading({ shift, initialSignedUp, attributes, onSuccess = () => {} }: ReserveShift) {
   const [loading, setLoading] = useState(false);
   const [signedUp, setSignedUp] = useState(initialSignedUp);
+  const router = useRouter();
 
   async function onSignUp() {
-
     setLoading(true);
     await signUp(shift);
     setLoading(false);
     setSignedUp(true);
+    onSuccess();
+  }
 
-    // setLoading(true)
-    // await getUserShifts();
-    // setLoading(false)
-    // setStatus("awaiting")
+  async function onGiveUp() {
+    setLoading(true);
+    await giveUp(shift);
+    setLoading(false);
+    setSignedUp(false);
+    onSuccess();
   }
 
 
   return (
     <AlertDialog>
+
+      
 
       {!signedUp ? (
           <AlertDialogTrigger asChild>
@@ -59,20 +66,32 @@ export function ConfirmWithLoading({ shift, initialSignedUp, attributes }: Reser
 
       <AlertDialogContent>
         <AlertDialogHeader>
-            <AlertDialogTitle>
-                Please confirm you want to take this shifts
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-                Job: {shift.job} <br/>
-                Time: {shift.start.toLocaleString()} - {shift.end.toLocaleString()}
-            </AlertDialogDescription> 
+          {signedUp ? (
+            <>
+             <AlertDialogTitle>
+              Please confirm you want to give up this shift
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+              Job: {shift.job} <br/>
+              Time: {shift.start.toLocaleString()} - {shift.end.toLocaleString()}
+              </AlertDialogDescription> 
+            </>
+          ) : (
+            <>
+             <AlertDialogTitle>
+              Please confirm you want to take this shifts
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+              Job: {shift.job} <br/>
+              Time: {shift.start.toLocaleString()} - {shift.end.toLocaleString()}
+              </AlertDialogDescription> 
+            </>
+          )}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          {signedUp && (
-            <AlertDialogCancel disabled={loading}>
+           <AlertDialogCancel disabled={loading}>
               Cancel
-            </AlertDialogCancel>
-          )}
+          </AlertDialogCancel>
 
           {!signedUp ? (
             <AlertDialogAction
@@ -82,7 +101,12 @@ export function ConfirmWithLoading({ shift, initialSignedUp, attributes }: Reser
               {loading ? "Signing up..." : "Confirm"}
             </AlertDialogAction>
           ) : (
-            <AlertDialogAction>Close</AlertDialogAction>
+            <AlertDialogAction
+              onClick={onGiveUp}
+              disabled={loading}
+            >
+              {loading ? "Giving Up..." : "Give Up"}
+            </AlertDialogAction>
           )}
         </AlertDialogFooter>
       </AlertDialogContent>
