@@ -8,7 +8,7 @@ export interface Category {
 export interface CategoryDetails {
     earliestStart: Date;
     latestEnd: Date;
-    availableSlots: number;
+    filledSlots: number;
     totalSlots: number;
 }
 

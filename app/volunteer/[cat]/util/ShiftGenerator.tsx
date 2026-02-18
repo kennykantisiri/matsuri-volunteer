@@ -61,9 +61,14 @@ function objectToShifts(jsonData: any, category: string): Shift[] {
             splitShifts.map((shift) => {
     
     
+                const date = new Date(shift.start);
+
+                const MMDD = `${(date.getMonth() + 1).toString().padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`;
+                const HHMM = toHHMM(date.toISOString());
+
                 const generatedId = category !== jobName.toLowerCase()
-                    ? `${category}_${jobName.toLowerCase().replace(/\s/g, '_')}_${toHHMM(shift.start.toISOString())}`
-                    : `${jobName.toLowerCase()}-${toHHMM(shift.start.toISOString())}`;
+                ? `${category}_${jobName.toLowerCase().replace(/\s/g, '_')}_${MMDD}_${HHMM}`
+                : `${jobName.toLowerCase()}_${MMDD}_${HHMM}`;
     
                 generatedShiftsArray.push({
                     id: generatedId,
@@ -83,7 +88,7 @@ function objectToShifts(jsonData: any, category: string): Shift[] {
         return generatedShiftsArray
 
     } catch (error) {
-        console.error(error);
+        console.error(`Error ${error}`);
         return []
     }
     

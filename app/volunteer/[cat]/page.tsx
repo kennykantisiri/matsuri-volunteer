@@ -4,9 +4,9 @@ import { getCategories } from "@/app/lib/category"
 import { Category } from "@/app/lib/types"
 // import JobTable from "./JobTable";
 import { Header } from "@/app/components/ui/text";
-import { generateShifts } from "./ShiftGenerator";
+import { generateShifts } from "./util/ShiftGenerator";
 import { Shift } from "@/app/lib/types";
-import SearchJob from "./SearchJob";
+import SearchJob from "./components/SearchJob";
 import { JobTable } from "./JobTable";
 import { JobTableContainer } from "./JobTableContainer";
 

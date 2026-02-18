@@ -2,12 +2,8 @@
 
 import { createClient } from "@/app/lib/supabase/server";
 import { Category, Shift } from "./types";
-import { timeStamp } from "console";
-import { create } from "domain";
-import { read } from "fs";
 import { getCategories } from "./category";
-import { generateShifts } from "../volunteer/[cat]/ShiftGenerator";
-import { sign } from "crypto";
+import { generateShifts } from "../volunteer/[cat]/util/ShiftGenerator";
 
 type Scope = "user" | "all";
 
@@ -57,6 +53,31 @@ export async function getShifts(scope: Scope, filter?: string): Promise<any> {
 
     return [];
 }
+
+export async function getAllShiftNames(includeSelf: boolean = false): Promise<any[]> {
+
+    const supabase = await createClient();
+    const user = await supabase.auth.getUser();
+
+    const query = supabase
+            .from("signup_with_names")
+            .select("*");
+
+    if (!includeSelf && user) {
+        query.neq("user_id", user)
+    } 
+    
+    const { data, error } = await query;
+
+    if (error) {
+        console.error("Error giving up shift:", error);
+        return [];
+    }
+
+    return data;
+
+}
+
 
 export async function getFormattedAllSignups(): Promise<Shift[]> {
 
@@ -229,8 +250,6 @@ export async function getUserStartTimestamps(): Promise<number[] | null> {
         }
 
     }
-
-    console.log(startTimestamps);
 
     return startTimestamps;
 }

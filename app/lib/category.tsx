@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { Category, CategoryDetails } from "./types";
-import { generateShifts } from "../volunteer/[cat]/ShiftGenerator";
+import { generateShifts } from "../volunteer/[cat]/util/ShiftGenerator";
 import { getFormattedAllSignups } from "./volunteer";
 
 export function getCategories() {

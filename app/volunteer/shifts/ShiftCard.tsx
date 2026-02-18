@@ -2,7 +2,7 @@ import Button from "@/app/components/Button";
 import { Header } from "@/app/components/ui/text";
 import { Shift } from "@/app/lib/types";
 import { formatDateTable } from "@/app/lib/utils";
-import { ConfirmWithLoading } from "../[cat]/ConfirmDialog";
+import { ConfirmWithLoading } from "../[cat]/components/ConfirmDialog";
 import { useRouter } from "next/navigation";
 
 interface Props {
